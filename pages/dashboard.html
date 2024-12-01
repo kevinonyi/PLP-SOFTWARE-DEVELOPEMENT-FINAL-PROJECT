@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Patient Dashboard</title>
+  <link rel="stylesheet" href="/assets/css/patient_styles.css">
+</head>
+<body>
+  <h2>Book an Appointment</h2>
+  <!-- Appointment booking form -->
+  <form id="appointmentForm">
+    <label for="doctorName">Doctor Name:</label>
+    <input type="text" id="doctorName" name="doctorName" required>
+
+    <label for="date">Date:</label>
+    <input type="date" id="date" name="date" required>
+
+    <label for="time">Time:</label>
+    <input type="time" id="time" name="time" required>
+
+    <button type="submit">Book Appointment</button>
+  </form>
+
+  <h2>Available Schedules</h2>
+  <!-- Fetch available schedules -->
+  <label for="scheduleDate">Select Date:</label>
+  <input type="date" id="scheduleDate" name="scheduleDate" required>
+  <button onclick="fetchAvailableSchedules()">Check Availability</button>
+
+  <!-- Display schedules here -->
+  <div id="schedulesList"></div>
+
+  <h2>Your Appointments</h2>
+  <!-- Appointments list -->
+  <ul id="appointmentsList"></ul>
+
+  <button onclick="logout()">Logout</button>
+
+  <script src="/assets/js/app.js"></script>
+  <script>
+    // Handle form submission to book an appointment
+    document.getElementById("appointmentForm").onsubmit = async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const data = Object.fromEntries(formData);
+
+      try {
+        const response = await fetch("/appointments/book", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+        const result = await response.json();
+
+        if (response.ok) {
+          alert("Appointment booked successfully!");
+          loadAppointments(); // Refresh appointments list after booking
+        } else {
+          alert(result.error || "Error booking appointment");
+        }
+      } catch (error) {
+        console.error("Error booking appointment:", error);
+        alert("An unexpected error occurred");
+      }
+    };
+
+    // Fetch available schedules for a selected date
+    async function fetchAvailableSchedules() {
+      const date = document.getElementById('scheduleDate').value;
+
+      if (!date) {
+        alert("Please select a date to view schedules.");
+        return;
+      }
+
+      try {
+        const response = await fetch(`/schedule/available?date=${date}`, {
+          method: 'GET',
+          credentials: 'include'
+        });
+
+        const schedules = await response.json();
+
+        const schedulesList = document.getElementById('schedulesList');
+        if (schedules.length === 0) {
+          schedulesList.innerHTML = "<p>No schedules available for this date.</p>";
+        } else {
+          schedulesList.innerHTML = schedules.map(schedule =>
+            `<p>Doctor: ${schedule.doctor_name}, Available from ${schedule.start_time} to ${schedule.end_time}
+             <button onclick="bookAppointment('${schedule.doctor_name}', '${schedule.date}', '${schedule.start_time}')">Book Appointment</button></p>`
+          ).join('');
+        }
+      } catch (error) {
+        console.error("Error fetching schedules:", error);
+        alert("Error fetching schedules");
+      }
+    }
+
+    // Book an appointment from the available schedules
+    async function bookAppointment(doctorName, date, time) {
+      try {
+        const response = await fetch('/appointments/book', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ doctorName, date, time }),
+          credentials: 'include'
+        });
+
+        const result = await response.json();
+        alert(result.message || result.error);
+        if (response.ok) {
+          loadAppointments(); // Refresh appointments list after booking
+        }
+      } catch (error) {
+        console.error("Error booking from schedule:", error);
+        alert("An unexpected error occurred");
+      }
+    }
+
+    // Load and display the logged-in user's appointments
+    async function loadAppointments() {
+      try {
+        const response = await fetch('/appointments/my-appointments', {  // Fixed route for fetching appointments
+          method: 'GET',
+          credentials: 'include'
+        });
+
+        const appointments = await response.json();
+        const appointmentsList = document.getElementById('appointmentsList');
+        appointmentsList.innerHTML = '';
+
+        if (appointments.length === 0) {
+          appointmentsList.innerHTML = "<li>No appointments found</li>";
+        } else {
+          appointmentsList.innerHTML = appointments.map(appointment => `
+            <li>
+              <p>Doctor: ${appointment.doctor_name}</p>
+              <p>Date: ${appointment.appointment_date}</p>
+              <p>Time: ${appointment.appointment_time}</p>
+              <button onclick="cancelAppointment(${appointment.id})">Cancel Appointment</button>
+            </li>
+          `).join('');
+        }
+      } catch (error) {
+        console.error("Error fetching appointments:", error);
+        alert("Error loading appointments");
+      }
+    }
+
+    // Cancel a specific appointment
+    async function cancelAppointment(appointmentId) {
+      try {
+        const response = await fetch(`/appointments/cancel/${appointmentId}`, {
+          method: 'DELETE',  // Fixed HTTP method for canceling appointments
+          credentials: 'include'
+        });
+
+        const result = await response.json();
+        alert(result.message || result.error);
+        if (response.ok) {
+          loadAppointments(); // Refresh appointments list after cancellation
+        }
+      } catch (error) {
+        console.error("Error canceling appointment:", error);
+        alert("An unexpected error occurred");
+      }
+    }
+
+    // Logout function
+    function logout() {
+      fetch('/auth/logout', { method: 'POST', credentials: 'include' })
+        .then(() => window.location.href = '/auth/login')
+        .catch(error => console.error("Logout failed:", error));
+    }
+
+    // Load appointments on page load
+    loadAppointments();
+  </script>
+</body>
+</html> 

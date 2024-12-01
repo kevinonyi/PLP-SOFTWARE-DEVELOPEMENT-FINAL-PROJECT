@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telemedicine Webpage</title>
+    <link rel="stylesheet" href="/assets/css/index.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <img src="/assets/logo.jpeg" alt="Telemedicine Logo">
+        <h1>Welcome to TeleMed</h1>
+    </header>
+
+    <!-- Navigation Bar -->
+    <nav>
+        <span class="hamburger">&#9776;</span>
+        <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#services">Services</a></li>
+            <li><a href="#about">About Us</a></li>
+            <li><a href="#contact">Contact Us</a></li>
+            <li><a href="http://localhost:3000/auth/login">Login</a></li>
+            <li><a href="http://localhost:3000/auth/Register">Register</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h2>Your Health, Our Priority</h2>
+            <p>
+                Consult with healthcare professionals from the comfort of your home.
+                Secure video consultations, prescriptions, and health advice, 24/7.
+            </p>
+        </div>
+        <div class="hero-image">
+            <img src="/assets/css/consult.webp" alt="Telemedicine Consultation">
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="services">
+        <h2>Our Services</h2>
+        <div class="service-items">
+            <div class="service-item">
+                <img src="/assets/css/consultvideo.png" alt="Video Consultation">
+                <h3>Video Consultations</h3>
+                <p>Get real-time consultations from licensed professionals.</p>
+            </div>
+            <div class="service-item">
+                <img src="/assets/css/prescription.png" alt="Prescriptions">
+                <h3>Prescriptions</h3>
+                <p>Receive your prescriptions securely and directly.</p>
+            </div>
+            <div class="service-item">
+                <img src="/assets/css/advice.png" alt="Health Advice">
+                <h3>Health Advice</h3>
+                <p>Expert advice to guide you on a healthier lifestyle.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <h3>Quick Links</h3>
+        <ul>
+            <li><a href="http://localhost:3000/auth/login">Patient Login</a></li>
+            <li><a href="http://localhost:3000/auth/login">Doctor Login</a></li>
+            <li><a href="#">FAQs</a></li>
+        </ul>
+        <h3>Search</h3>
+        <input type="text" placeholder="Search...">
+    </aside>
+
+    <!-- About Us Section -->
+    <section id="about" class="about">
+        <h2>About Us</h2>
+        <p>
+            Our telemedicine platform bridges the gap between patients and healthcare professionals,
+            offering accessible and reliable care from anywhere.
+        </p>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 Telemedicine App. All rights reserved.</p>
+        <p>
+            Follow us:
+            <a href="#">Facebook</a> |
+            <a href="#">Twitter</a> |
+            <a href="#">Instagram</a>
+        </p>
+        <p>Contact us: kevinonyango@example.com | (+254) 7456-7890</p>
+    </footer>
+
+    <script>
+        const hamburger = document.querySelector('.hamburger');
+        const navLinks = document.querySelector('nav ul');
+
+        hamburger.addEventListener('click', () => {
+            navLinks.classList.toggle('show');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!-- pages/doctorDashboard.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Doctor Dashboard</title>
+  <link rel="stylesheet" href="/assets/css/doctor_styles.css">
+</head>
+<body>
+  <h2>Doctor Dashboard</h2>
+  
+  <h2>Set Availability</h2>
+<form id="setScheduleForm" method="POST" action="/schedule/set">
+    <label for="date">Date:</label>
+    <input type="date" id="date" name="date" required>
+
+    <label for="start_time">Start Time:</label>
+    <input type="time" id="start_time" name="start_time" required>
+
+    <label for="end_time">End Time:</label>
+    <input type="time" id="end_time" name="end_time" required>
+
+    <button type="submit">Set Schedule</button>
+</form>
+
+<script>
+  document.getElementById('setScheduleForm').onsubmit = async function(e) {
+      e.preventDefault();
+  
+      const formData = {
+          date: document.getElementById('date').value,
+          start_time: document.getElementById('start_time').value,
+          end_time: document.getElementById('end_time').value
+      };
+  
+      const response = await fetch('/schedule/set', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(formData), // Converts form data to JSON string
+          credentials: 'include'
+      });
+  
+      const result = await response.json();
+      alert(result.message || result.error);
+  };
+  </script>
+  
+
+</body>
+</html>
